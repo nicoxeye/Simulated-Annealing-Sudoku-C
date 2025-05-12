@@ -5,6 +5,7 @@
 #include <time.h>
 #define SIZE 9
 #define BOX 3
+#include "sudoku.h"
 
 void fillGrid(int grid[SIZE][SIZE], bool fixed[SIZE][SIZE]);
 bool fixedValueInBox(int grid[SIZE][SIZE], bool fixed[SIZE][SIZE], int blockRow, int blockCol, int val);
@@ -16,18 +17,24 @@ void solveSudoku_SA(int grid[SIZE][SIZE], bool fixed[SIZE][SIZE], double T_start
 
 
 int main(){
-    int grid[SIZE][SIZE] = {
-        {5, 3, 0, 0, 7, 0, 0, 0, 0},
-        {6, 0, 0, 1, 9, 5, 0, 0, 0},
-        {0, 9, 8, 0, 0, 0, 0, 6, 0},
-        {8, 0, 0, 0, 6, 0, 0, 0, 3},
-        {4, 0, 0, 8, 0, 3, 0, 0, 1},
-        {7, 0, 0, 0, 2, 0, 0, 0, 6},
-        {0, 6, 0, 0, 0, 0, 2, 8, 0},
-        {0, 0, 0, 4, 1, 9, 0, 0, 5},
-        {0, 0, 0, 0, 8, 0, 0, 7, 9}
-    };
+    srand(time(NULL));
 
+    gameState.boxSize = 3;
+    gameState.difficulty = 2;
+    gameState.sizeOfTheBoard = 9;
+    gameState.board = sudokuGenerator();
+
+    int grid[SIZE][SIZE];
+    
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            grid[i][j] = gameState.board[i][j];
+        }
+    }
+
+
+    printf("generated sudoku:\n");
+    printBoard();
 
     bool fixed[SIZE][SIZE];
     initFixed(grid, fixed);
@@ -51,6 +58,8 @@ int main(){
 
     getchar();
     getchar();
+
+    freeBoard();
 
     return 0;
 }
@@ -253,7 +262,6 @@ int computeCost(int grid[SIZE][SIZE]) {
 
 // sudoku solver - simulated annealing
 void solveSudoku_SA(int grid[SIZE][SIZE], bool fixed[SIZE][SIZE], double T_start, double T_end, double alpha, int max_iterations) {
-    srand(time(NULL));
 
     int currentCost = computeCost(grid);
     double T = T_start;
